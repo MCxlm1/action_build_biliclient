@@ -51,6 +51,14 @@ jobs:
       run: chmod +x gradlew
     - name: mkdir
       run: mkdir out
+    - name: Init Signature
+      run: |
+        touch local.properties
+        echo ALIAS_NAME='${{ secrets.ALIAS_NAME }}' >> local.properties
+        echo ALIAS_PASSWORD='${{ secrets.ALIAS_PASSWORD }}' >> local.properties
+        echo KEY_PASSWORD='${{ secrets.KEY_PASSWORD }}' >> local.properties
+        echo KEY_PATH='./key.jks' >> local.properties
+        echo ${{ secrets.KEY_STORE }} | base64 --decode > $GITHUB_WORKSPACE/app/key.jks
     - name: set up JDK 11
       uses: actions/setup-java@v4
       with:
@@ -60,7 +68,7 @@ jobs:
     - name: Build with Gradle
       run: |
           ./gradlew :app:assembleRelease
-          mv app/build/outputs/apk/release/app-release-unsigned.apk out/app-release.apk
+          mv app/build/outputs/apk/release/app-release.apk out/app-release.apk
     - name: Upload APK(release)
       uses: actions/upload-artifact@v4
       with:
