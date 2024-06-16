@@ -49,6 +49,9 @@ jobs:
       run: ls -l /home/runner/work/action_build_biliclient/action_build_biliclient
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+    - name: Build with Gradle
+      run: |
+          ./gradlew :app:assembleRelease
     - uses: r0adkll/sign-android-release@v1
       name: Sign app APK
       # ID used to access action output
