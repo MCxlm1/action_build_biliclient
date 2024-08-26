@@ -33,11 +33,21 @@ jobs:
       run: |
           ./gradlew :app:assembleDebug
           mv app/build/outputs/apk/debug/app-debug.apk out/app-debug.apk
+    - uses: ilharp/sign-android-release@nightly # Or use @nightly
+      name: Sign app APK
+      id: sign_app
+      with:
+        releaseDir: app/build/outputs/apk/release
+        signingKey: ${{ secrets.KEY_STORE }}
+        keyAlias: ${{ secrets.ALIAS_NAME }}
+        keyStorePassword: ${{ secrets.KEY_PASSWORD }}
+        keyPassword: ${{ secrets.ALIAS_PASSWORD }}
+        buildToolsVersion: 30.0.3
     - name: Upload APK(debug)
       uses: actions/upload-artifact@v4
       with:
           name: app-debug
-          path: out/app-debug.*
+          path: ${{steps.sign_app.outputs.signedFile}}
 
   build-release:
 
